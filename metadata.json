@@ -1,0 +1,6 @@
+{
+  "name": "Missouri Bail Bonds | 20+ Counties Served",
+  "description": "Expert 24/7 bail bondsman in Missouri. Serving Washington, Jefferson, St. Francois, St. Charles, Howell, and over 20+ other counties across the state.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

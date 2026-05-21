@@ -1,0 +1,14 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Specifically allow Googlebot (Google search)
+User-agent: Googlebot
+Allow: /
+
+# Specifically allow Gemini's web agent (Google-Extended)
+User-agent: Google-Extended
+Allow: /
+
+# Explicitly index all pages
+Sitemap: https://jstorybailbonds.com/sitemap.xml

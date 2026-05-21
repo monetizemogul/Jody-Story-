@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-brand-bg: #050B24; /* Cosmic Midnight Blue */
+  --color-brand-surface: #0B1330; /* Deep Navy Blue */
+  --color-brand-accent: #FFB800; /* Bright Gold */
+  --color-brand-accent-light: #FFD700; /* Lighter Gold */
+  --color-brand-accent-dark: #E65C00; /* Deep Orange/Amber shadow */
+  --color-brand-primary: #00D2FF; /* Bright Teal/Cyan */
+  --color-brand-primary-dark: #00A3E0; /* Deeper Cyan */
+  --color-brand-secondary: #4B0082; /* Electric Purple */
+  --color-brand-secondary-dark: #2E0066; /* Deep Indigo */
+  --color-brand-cream: #FFF8D0; /* Top highlight Cream */
+  --color-brand-silver: #E0E4EC; /* Metallic Silver */
+  --color-brand-muted: #7A8B9E; /* Steel Blue/Slate */
+  --color-brand-border: #0B1330; /* Deep Navy Blue border */
+  --color-brand-text: #FFFFFF;
+  --color-brand-text-dim: #E0E4EC;
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    background: linear-gradient(to bottom, var(--color-brand-cream) 0%, var(--color-brand-accent-light) 30%, var(--color-brand-accent) 70%, var(--color-brand-accent-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .text-gradient-teal {
+    background: linear-gradient(to bottom, #FFFFFF 0%, var(--color-brand-primary) 50%, var(--color-brand-primary-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .bg-gradient-purple {
+    background: linear-gradient(to right, var(--color-brand-secondary), var(--color-brand-secondary-dark));
+  }
+  .logo-shadow {
+    filter: drop-shadow(3px 3px 0px #0B1330);
+  }
+  .blue-glow {
+    text-shadow: 0 0 15px rgba(0, 210, 255, 0.6);
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-brand-bg text-brand-text antialiased;
+  }
+}
+
+.galaxy-bg {
+  background: radial-gradient(circle at center, #0B1330 0%, #050B24 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.galaxy-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);
+  background-size: 550px 550px, 350px 350px, 250px 250px;
+  background-position: 0 0, 40px 60px, 130px 270px;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
