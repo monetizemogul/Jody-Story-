@@ -88,5 +88,21 @@ export const cities: City[] = [
     countyName: 'Webster County', 
     circuit: 'Circuit 30', 
     description: 'Serving Marshfield and Webster County with professional bail services. Specialized knowledge of Circuit 30 courts.' 
+  },
+  {
+    id: 'bonne-terre',
+    name: 'Bonne Terre',
+    countyId: 'st-francois',
+    countyName: 'St. Francois County',
+    circuit: 'Circuit 24',
+    description: 'Reliable bail bonds in Bonne Terre. Rapid response for St. Francois County jail releases and comprehensive 24/7 support.'
+  },
+  {
+    id: 'ironton',
+    name: 'Ironton',
+    countyId: 'iron',
+    countyName: 'Iron County',
+    circuit: 'Circuit 42',
+    description: 'Expert bail services in Ironton and surrounding areas. Fast 24/7 jail release support for Iron County cases.'
   }
 ];

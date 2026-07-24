@@ -18,25 +18,7 @@ export default defineConfig(({mode}) => {
     build: {
       cssCodeSplit: true,
       minify: 'esbuild',
-      chunkSizeWarningLimit: 600,
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              if (id.includes('motion') || id.includes('motion-dom') || id.includes('framer-motion')) {
-                return 'motion-anim';
-              }
-              if (id.includes('lucide-react')) {
-                return 'lucide-icons';
-              }
-              if (id.includes('react-router') || id.includes('react-router-dom')) {
-                return 'react-router-core';
-              }
-              return 'vendor';
-            }
-          },
-        },
-      },
+      chunkSizeWarningLimit: 1200,
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.

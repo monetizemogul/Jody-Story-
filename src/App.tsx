@@ -4,7 +4,7 @@
  */
 
 import { Suspense, lazy, useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -20,14 +20,30 @@ const AIChat = lazy(() => import('./components/AIChat'));
 
 export default function App() {
   const [shouldRenderDeferred, setShouldRenderDeferred] = useState(false);
+  const [hasLegalHash, setHasLegalHash] = useState(false);
 
   useEffect(() => {
-    // Defers the heavy overlay modules by 2 seconds to boost initial Lighthouse audit scores (FCP, SI, TBT)
+    // Defers the overlays to boost initial FCP/LCP and lower main-thread pressure
     const timer = setTimeout(() => {
       setShouldRenderDeferred(true);
-    }, 2000);
+    }, 1500);
 
-    return () => clearTimeout(timer);
+    // Only load LegalModals on-demand when one of the matching legal hashes exists
+    const checkHash = () => {
+      const hash = window.location.hash.toLowerCase();
+      const isLegalHash = ['#privacy', '#terms', '#licensing', '#resources', '#disclaimer'].includes(hash);
+      if (isLegalHash) {
+        setHasLegalHash(true);
+      }
+    };
+    
+    checkHash();
+    window.addEventListener('hashchange', checkHash);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('hashchange', checkHash);
+    };
   }, []);
 
   return (
@@ -43,6 +59,11 @@ export default function App() {
           }>
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/felony-bail-bonds" element={<HomePage />} />
+              <Route path="/service-area/city/bonne-terre" element={<Navigate to="/bonne-terre-mo-bail-bonds--24/7-jail-release-services" replace />} />
+              <Route path="/bonne-terre-mo-bail-bonds--24/7-jail-release-services" element={<CityPage forceCityId="bonne-terre" />} />
+              <Route path="/service-area/city/ironton" element={<Navigate to="/ironton-bail-bonds-247-jail-release" replace />} />
+              <Route path="/ironton-bail-bonds-247-jail-release" element={<CityPage forceCityId="ironton" />} />
               <Route path="/service-area/:countyId" element={<CountyPage />} />
               <Route path="/service-area/city/:cityId" element={<CityPage />} />
             </Routes>
@@ -52,9 +73,11 @@ export default function App() {
           
           {shouldRenderDeferred && (
             <>
-              <Suspense fallback={null}>
-                <LegalModals />
-              </Suspense>
+              {hasLegalHash && (
+                <Suspense fallback={null}>
+                  <LegalModals />
+                </Suspense>
+              )}
               <Suspense fallback={null}>
                 <AIChat />
               </Suspense>

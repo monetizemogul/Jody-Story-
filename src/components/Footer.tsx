@@ -1,8 +1,9 @@
 import { ShieldCheck, Lock, Clock, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { counties } from '../data/counties';
-import { cities } from '../data/cities';
-import logo from '../assets/images/jody_story_logo.jpg';
+import { counties } from '../pages/counties';
+import { cities } from '../pages/cities';
+import Logo from './Logo';
+import { getCityUrl } from '../utils/urls';
 
 export default function Footer() {
   const trustBadges = [
@@ -19,16 +20,7 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2 lg:col-span-2">
             <div className="mb-8">
               <Link to="/" className="flex items-center gap-4 group">
-                <img 
-                  src={logo} 
-                  alt="Jody Story Logo" 
-                  className="w-16 h-16 object-contain"
-                  width={64}
-                  height={64}
-                  loading="lazy"
-                  decoding="async"
-                  referrerPolicy="no-referrer"
-                />
+                <Logo className="w-16 h-16" size={64} />
                 <div className="flex flex-col">
                   <span className="text-2xl font-serif font-black italic text-gradient-teal leading-none logo-shadow">Jody</span>
                   <span className="text-2xl font-serif font-black italic text-gradient-gold leading-none logo-shadow">Story</span>
@@ -48,7 +40,7 @@ export default function Footer() {
           </div>
           
           <div className="col-span-1">
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-white mb-8">Quick Navigation</h4>
+            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white mb-8">Quick Navigation</p>
             <ul className="space-y-4 text-brand-text-dim text-[11px] uppercase tracking-widest font-medium">
               <li><Link to="/#how-it-works" className="hover:text-brand-accent transition-colors">Process Guide</Link></li>
               <li><Link to="/#calculator" className="hover:text-brand-accent transition-colors">Fee Calculator</Link></li>
@@ -58,7 +50,7 @@ export default function Footer() {
           </div>
 
           <div className="col-span-1 lg:col-span-1">
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-white mb-8">Missouri Bail Bond Service Areas</h4>
+            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white mb-8">Missouri Bail Bond Service Areas</p>
             <div className="space-y-2 text-brand-text-dim text-[10px] uppercase tracking-widest font-medium max-h-[200px] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-brand-primary">
               {counties.map(county => (
                 <Link key={county.id} to={`/service-area/${county.id}`} className="hover:text-brand-primary transition-colors block truncate">
@@ -69,10 +61,10 @@ export default function Footer() {
           </div>
 
           <div className="col-span-1">
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-white mb-8">Popular Cities Served</h4>
+            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white mb-8">Popular Cities Served</p>
             <div className="space-y-2 text-brand-text-dim text-[10px] uppercase tracking-widest font-medium">
               {cities.slice(0, 8).map(city => (
-                <Link key={city.id} to={`/service-area/city/${city.id}`} className="hover:text-brand-accent transition-colors block truncate">
+                <Link key={city.id} to={getCityUrl(city.id)} className="hover:text-brand-accent transition-colors block truncate">
                   {city.name}, MO
                 </Link>
               ))}
@@ -80,7 +72,7 @@ export default function Footer() {
           </div>
 
           <div className="col-span-1 lg:col-span-1">
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-white mb-8">Legal Policy</h4>
+            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white mb-8">Legal Policy</p>
             <ul className="space-y-4 text-brand-text-dim text-[11px] uppercase tracking-widest font-medium">
               <li><Link to="/#disclaimer" className="text-brand-accent font-black hover:text-white transition-colors">Legal Disclaimer</Link></li>
               <li><Link to="/#privacy" className="hover:text-brand-accent transition-colors">Privacy Charter</Link></li>

@@ -4,7 +4,7 @@ import { Phone, Mail, MapPin, Send, CheckCircle2, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { counties } from '../data/counties';
+import { counties } from '../pages/counties';
 
 const contactSchema = z.object({
   name: z.string().trim().min(2, "Name is required").max(100, "Name too long"),
@@ -19,43 +19,37 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function Contact() {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isDemo, setIsDemo] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formDataVal, setFormDataVal] = useState<ContactFormData | null>(null);
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema)
   });
 
-  const onSubmit = async (data: ContactFormData) => {
+  const onSubmit = (data: ContactFormData) => {
     setIsSubmitting(true);
+    setFormDataVal(data);
     
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const subject = `Bail Bond Lead: ${data.name} (${data.county})`;
+      const body = `Jody Story Bail Bonds LLC Contact Form Submission:\n\n` +
+        `Name: ${data.name}\n` +
+        `Phone: ${data.phone}\n` +
+        `Email: ${data.email}\n` +
+        `County of Arrest: ${data.county}\n` +
+        `Inmate Name: ${data.inmateName || 'N/A'}\n\n` +
+        `Message Details:\n${data.message}\n\n` +
+        `Submitted on: ${new Date().toLocaleString()}`;
 
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error("Failed to send message");
-      }
-
-      if (responseData.demo) {
-        setIsDemo(true);
-      }
-
+      const mailtoUrl = `mailto:jodystory95@yahoo.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      
+      // Open default email application
+      window.location.href = mailtoUrl;
+      
       setIsSubmitted(true);
       reset();
     } catch (error) {
       console.error("Submission error:", error);
-      // Even if it fails, we might want to show success to not discourage users, 
-      // but better to handle it. For now, let's just log and set success for UX 
-      // unless it's a critical failure.
-      setIsSubmitted(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -118,7 +112,7 @@ export default function Contact() {
             </div>
           </div>
 
-          <div className="bg-brand-bg p-12 border border-brand-border relative overflow-hidden">
+          <div className="bg-brand-bg p-6 md:p-12 border border-brand-border relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-brand-accent/5 blur-[100px] pointer-events-none" />
             
             <AnimatePresence mode="wait">
@@ -130,24 +124,42 @@ export default function Contact() {
                   className="h-full flex flex-col items-center justify-center text-center py-12"
                 >
                   <div className="w-20 h-20 bg-brand-accent/10 border border-brand-accent/30 flex items-center justify-center rounded-full mb-8">
-                    <CheckCircle2 className="w-10 h-10 text-brand-accent" />
+                    <CheckCircle2 className="w-10 h-10 text-brand-accent animate-pulse" />
                   </div>
                   <h3 className="text-2xl font-serif text-white mb-4 italic font-bold">
-                    {isDemo ? "Request Logged (Demo)" : "Request Received"}
+                    Email Client Launched
                   </h3>
-                  <p className="text-brand-text-dim text-sm max-w-xs leading-relaxed uppercase tracking-widest font-bold">
-                    {isDemo 
-                      ? "The contact form is in Demo Mode. To receive real emails, please configure your RESEND_API_KEY in the AI Studio Secrets panel."
-                      : "An agent has been notified and will contact you at the provided number shortly."}
+                  <p className="text-brand-text-dim text-sm max-w-sm leading-relaxed mb-8 font-light">
+                    Your default mail application has been opened with your pre-populated inquiry draft. Simply click <strong className="text-white">"Send"</strong> in your mail application to instantly transmit these details to <strong className="text-brand-accent">jodystory95@yahoo.com</strong>.
                   </p>
+
+                  {formDataVal && (
+                    <div className="w-full space-y-4 mb-4">
+                      <a 
+                        href={`mailto:jodystory95@yahoo.com?subject=${encodeURIComponent(`Bail Bond Lead: ${formDataVal.name} (${formDataVal.county})`)}&body=${encodeURIComponent(
+                          `Jody Story Bail Bonds LLC Contact Form Submission:\n\n` +
+                          `Name: ${formDataVal.name}\n` +
+                          `Phone: ${formDataVal.phone}\n` +
+                          `Email: ${formDataVal.email}\n` +
+                          `County of Arrest: ${formDataVal.county}\n` +
+                          `Inmate Name: ${formDataVal.inmateName || 'N/A'}\n\n` +
+                          `Message:\n${formDataVal.message}\n`
+                        )}`}
+                        className="w-full bg-brand-accent text-black py-4 px-6 text-xs font-bold uppercase tracking-[0.2em] hover:bg-brand-accent/90 transition-all shadow-lg flex items-center justify-center gap-4 select-none cursor-pointer"
+                      >
+                        Re-open Email App / Send Manually
+                        <Send className="w-4 h-4" />
+                      </a>
+                    </div>
+                  )}
+
                   <button 
                     onClick={() => {
                       setIsSubmitted(false);
-                      setIsDemo(false);
                     }}
-                    className="mt-12 text-[10px] font-bold text-brand-accent uppercase tracking-[0.3em] hover:text-white transition-colors"
+                    className="mt-6 text-[10px] font-bold text-brand-muted uppercase tracking-[0.3em] hover:text-white transition-colors"
                   >
-                    Send Another message
+                    ← Edit details / Send Another message
                   </button>
                 </motion.div>
               ) : (
@@ -160,9 +172,10 @@ export default function Contact() {
                   <div className="space-y-4">
                     <div className="grid sm:grid-cols-2 gap-8">
                       <div className="space-y-2">
-                        <label className="block text-[10px] font-bold text-brand-muted uppercase tracking-widest">Requester Name</label>
+                        <label htmlFor="contact-name" className="block text-[10px] font-bold text-brand-muted uppercase tracking-widest">Requester Name</label>
                         <input 
                           {...register('name')}
+                          id="contact-name"
                           type="text" 
                           className={`w-full bg-brand-muted/10 border-b ${errors.name ? 'border-red-500' : 'border-brand-border'} py-3 px-0 text-sm font-medium text-white focus:outline-none focus:border-brand-accent transition-all placeholder:text-brand-muted`} 
                           placeholder="Full name..." 
@@ -170,9 +183,10 @@ export default function Contact() {
                         {errors.name && <span className="text-[9px] text-red-500 font-bold uppercase tracking-tighter">{errors.name.message}</span>}
                       </div>
                       <div className="space-y-2">
-                        <label className="block text-[10px] font-bold text-brand-muted uppercase tracking-widest">Phone Number</label>
+                        <label htmlFor="contact-phone" className="block text-[10px] font-bold text-brand-muted uppercase tracking-widest">Phone Number</label>
                         <input 
                           {...register('phone')}
+                          id="contact-phone"
                           type="tel" 
                           className={`w-full bg-brand-muted/10 border-b ${errors.phone ? 'border-red-500' : 'border-brand-border'} py-3 px-0 text-sm font-medium text-white focus:outline-none focus:border-brand-accent transition-all placeholder:text-brand-muted`} 
                           placeholder="(555) 000-0000" 
@@ -183,9 +197,10 @@ export default function Contact() {
                     
                     <div className="grid sm:grid-cols-2 gap-8">
                       <div className="space-y-2">
-                        <label className="block text-[10px] font-bold text-brand-muted uppercase tracking-widest">Email Address</label>
+                        <label htmlFor="contact-email" className="block text-[10px] font-bold text-brand-muted uppercase tracking-widest">Email Address</label>
                         <input 
                           {...register('email')}
+                          id="contact-email"
                           type="email" 
                           className={`w-full bg-brand-muted/10 border-b ${errors.email ? 'border-red-500' : 'border-brand-border'} py-3 px-0 text-sm font-medium text-white focus:outline-none focus:border-brand-accent transition-all placeholder:text-brand-muted`} 
                           placeholder="email@example.com" 
@@ -193,9 +208,10 @@ export default function Contact() {
                         {errors.email && <span className="text-[9px] text-red-500 font-bold uppercase tracking-tighter">{errors.email.message}</span>}
                       </div>
                       <div className="space-y-2">
-                        <label className="block text-[10px] font-bold text-brand-muted uppercase tracking-widest">County of Arrest</label>
+                        <label htmlFor="contact-county" className="block text-[10px] font-bold text-brand-muted uppercase tracking-widest">County of Arrest</label>
                         <select 
                           {...register('county')}
+                          id="contact-county"
                           className={`w-full bg-brand-muted/10 border-b ${errors.county ? 'border-red-500' : 'border-brand-border'} py-3 px-0 text-sm font-medium text-white focus:outline-none focus:border-brand-accent transition-all appearance-none`}
                         >
                           <option value="" className="bg-brand-bg">Select County...</option>
@@ -210,9 +226,10 @@ export default function Contact() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="block text-[10px] font-bold text-brand-muted uppercase tracking-widest">Inmate Name (Optional)</label>
+                    <label htmlFor="contact-inmate" className="block text-[10px] font-bold text-brand-muted uppercase tracking-widest">Inmate Name (Optional)</label>
                     <input 
                       {...register('inmateName')}
+                      id="contact-inmate"
                       type="text" 
                       className="w-full bg-brand-muted/10 border-b border-brand-border py-3 px-0 text-sm font-medium text-white focus:outline-none focus:border-brand-accent transition-all placeholder:text-brand-muted" 
                       placeholder="Full legal name" 
@@ -220,9 +237,10 @@ export default function Contact() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="block text-[10px] font-bold text-brand-muted uppercase tracking-widest">Message Details</label>
+                    <label htmlFor="contact-message" className="block text-[10px] font-bold text-brand-muted uppercase tracking-widest">Message Details</label>
                     <textarea 
                       {...register('message')}
+                      id="contact-message"
                       rows={4} 
                       className={`w-full bg-brand-muted/10 border-b ${errors.message ? 'border-red-500' : 'border-brand-border'} py-3 px-0 text-sm font-medium text-white focus:outline-none focus:border-brand-accent transition-all placeholder:text-brand-muted resize-none`} 
                       placeholder="Provide context regarding the bond needed..."

@@ -117,10 +117,14 @@ export default function LegalModals() {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
             className="relative w-full max-w-2xl bg-brand-muted border border-brand-border p-8 md:p-12 shadow-2xl"
           >
             <button 
               onClick={closeModal}
+              aria-label="Close modal dialogue"
               className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"
             >
               <X className="w-6 h-6" />
@@ -130,7 +134,7 @@ export default function LegalModals() {
               <div className="mb-6 p-4 rounded-full border border-brand-border bg-brand-bg/50">
                 {LEGAL_CONTENT[modalType].icon}
               </div>
-              <h2 className="text-3xl font-serif text-white italic font-bold mb-8 italic underline decoration-brand-accent/30 underline-offset-8">
+              <h2 id="modal-title" className="text-3xl font-serif text-white italic font-bold mb-8 italic underline decoration-brand-accent/30 underline-offset-8">
                 {LEGAL_CONTENT[modalType].title}
               </h2>
               <div className="text-brand-text-dim leading-relaxed space-y-4 text-left whitespace-pre-line font-light">

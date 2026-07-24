@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShieldCheck, Calendar, MapPin, Scale, Filter, ChevronDown, AlertCircle } from 'lucide-react';
-import { counties as allCounties } from '../data/counties';
+import { counties as allCounties } from '../pages/counties';
 
 const STATUS_VARIANTS = [
   { label: "Active", color: "text-blue-400", bg: "bg-blue-400" },
@@ -145,6 +145,7 @@ export default function WorkRecord() {
                 <select 
                   value={selectedCounty}
                   onChange={(e) => setSelectedCounty(e.target.value)}
+                  aria-label="Filter case records by county"
                   className="bg-brand-muted/30 border border-brand-border text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2 pr-10 appearance-none focus:outline-none focus:border-brand-primary transition-colors cursor-pointer hover:bg-brand-muted/50"
                 >
                   {counties.map(county => (

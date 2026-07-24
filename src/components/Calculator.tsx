@@ -47,12 +47,13 @@ export default function Calculator() {
             
             <div className="space-y-10">
               <div>
-                <label className="block text-[10px] font-bold text-brand-muted uppercase tracking-widest mb-4">
+                <label htmlFor="bond-amount-input" className="block text-[10px] font-bold text-brand-muted uppercase tracking-widest mb-4">
                   Full Bail Amount
                 </label>
                 <div className="relative group">
                   <span className="absolute left-0 bottom-4 text-3xl font-serif italic text-brand-accent/50">$</span>
                   <input 
+                    id="bond-amount-input"
                     type="number" 
                     value={bondAmount || ''}
                     onChange={(e) => {
@@ -72,6 +73,7 @@ export default function Calculator() {
                     value={bondAmount}
                     onChange={(e) => setBondAmount(Number(e.target.value))}
                     className="w-full h-1 bg-brand-border rounded-lg appearance-none cursor-pointer accent-brand-accent"
+                    aria-label="Drag to adjust overall bail sum"
                   />
                 </div>
               </div>

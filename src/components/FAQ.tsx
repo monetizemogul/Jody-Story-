@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Helmet } from 'react-helmet-async';
 
 const faqs = [
   {
@@ -35,20 +35,22 @@ export default function FAQ() {
 
   return (
     <section id="faq" className="py-32 bg-brand-bg">
-      <script type="application/ld+json">
-        {JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          "mainEntity": faqs.map(faq => ({
-            "@type": "Question",
-            "name": faq.q,
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": faq.a
-            }
-          }))
-        })}
-      </script>
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faqs.map(faq => ({
+              "@type": "Question",
+              "name": faq.q,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.a
+              }
+            }))
+          })}
+        </script>
+      </Helmet>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-20">
           <span className="text-[10px] uppercase font-bold tracking-[0.3em] text-brand-primary mb-4 block">Information Center</span>
@@ -65,6 +67,8 @@ export default function FAQ() {
             >
               <button 
                 onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
+                aria-expanded={openIdx === idx}
+                aria-controls={`faq-answer-${idx}`}
                 className="w-full flex items-center justify-between p-8 text-left hover:bg-white/5 transition-all outline-none"
               >
                 <span className="text-sm font-bold text-white uppercase tracking-widest">{faq.q}</span>
@@ -72,21 +76,36 @@ export default function FAQ() {
                   <ChevronDown className="w-5 h-5" />
                 </div>
               </button>
-              <motion.div
-                initial={false}
-                animate={{ 
-                  height: openIdx === idx ? 'auto' : 0, 
-                  opacity: openIdx === idx ? 1 : 0 
-                }}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}
-                className="overflow-hidden"
+              <div
+                id={`faq-answer-${idx}`}
+                className={cn(
+                  "grid transition-[grid-template-rows,opacity] duration-300 ease-in-out overflow-hidden border-brand-border",
+                  openIdx === idx ? "grid-rows-[1fr] opacity-100 border-t" : "grid-rows-[0fr] opacity-0"
+                )}
               >
-                <div className="px-8 pb-8 text-brand-text-dim text-sm leading-relaxed border-t border-brand-border pt-6 font-light">
-                  {faq.a}
+                <div className="overflow-hidden">
+                  <div className="px-8 pb-8 text-brand-text-dim text-sm leading-relaxed pt-6 font-light">
+                    {faq.a}
+                  </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-16 pt-12 border-t border-brand-border/40 text-center">
+          <p className="text-xs uppercase tracking-widest font-bold text-brand-accent mb-4">Official Judicial Resources</p>
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-xs text-brand-text-dim">
+            <a href="https://www.courts.mo.gov/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-primary underline transition-colors">
+              Missouri Case.net (Official Court Case Lookup)
+            </a>
+            <a href="https://dci.mo.gov/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-primary underline transition-colors">
+              Missouri Department of Commerce & Insurance
+            </a>
+            <a href="https://revisor.mo.gov/main/Home.aspx" target="_blank" rel="noopener noreferrer" className="hover:text-brand-primary underline transition-colors">
+              Missouri Revised Statutes (Bail Regulations)
+            </a>
+          </div>
         </div>
       </div>
     </section>

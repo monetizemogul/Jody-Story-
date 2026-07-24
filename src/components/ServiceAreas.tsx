@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { MapPin, ArrowRight } from 'lucide-react';
-import { counties } from '../data/counties';
-import { cities } from '../data/cities';
+import { counties } from '../pages/counties';
+import { cities } from '../pages/cities';
+import { getCityUrl } from '../utils/urls';
 
 export default function ServiceAreas() {
   return (
@@ -33,18 +34,15 @@ export default function ServiceAreas() {
               <div className="h-px flex-1 bg-brand-primary/20" />
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {counties.filter(c => [
-                'washington', 'st-francois', 'ste-genevieve', 'madison', 
-                'franklin', 'crawford', 'dent', 'iron', 'reynolds', 'wayne'
-              ].includes(c.id)).map((county) => (
+              {[...counties].sort((a, b) => a.name.localeCompare(b.name)).map((county) => (
                 <Link
                   key={county.id}
                   to={`/service-area/${county.id}`}
-                  className="group p-4 border border-brand-border bg-brand-bg hover:border-brand-primary transition-all duration-300"
+                  className="group p-4 border border-brand-border bg-brand-bg hover:border-brand-primary transition-all duration-300 rounded-sm"
                 >
                   <div className="flex flex-col h-full justify-between gap-4">
                     <span className="text-[10px] font-black text-brand-primary uppercase tracking-widest">{county.circuit}</span>
-                    <h4 className="text-white font-bold group-hover:text-brand-primary transition-colors text-sm uppercase tracking-tight">{county.name}</h4>
+                    <h4 className="text-white font-bold group-hover:text-brand-primary transition-colors text-xs uppercase tracking-tight">{county.name}</h4>
                   </div>
                 </Link>
               ))}
@@ -62,7 +60,7 @@ export default function ServiceAreas() {
               {cities.map((city) => (
                 <Link
                   key={city.id}
-                  to={`/service-area/city/${city.id}`}
+                  to={getCityUrl(city.id)}
                   className="flex items-center justify-between p-4 border border-brand-border bg-brand-bg hover:bg-brand-surface group transition-all"
                 >
                   <div className="flex items-center gap-4">
